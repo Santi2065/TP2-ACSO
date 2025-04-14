@@ -1,0 +1,215 @@
+Santiago Luis Groba Alonso - grobaalonsos@udesa.edu.ar
+
+## Fase 1
+### Análisis del código assembler
+Dump of assembler code for function phase_1:
+   0x0000000000401de7 <+0>:     endbr64
+   0x0000000000401deb <+4>:     sub    rsp,0x8
+   0x0000000000401def <+8>:     lea    rsi,[rip+0xc7c6a]        # 0x4c9a60
+   0x0000000000401df6 <+15>:    call   0x40231e <strings_not_equal>
+   0x0000000000401dfb <+20>:    test   eax,eax
+   0x0000000000401dfd <+22>:    jne    0x401e04 <phase_1+29>
+   0x0000000000401dff <+24>:    add    rsp,0x8
+   0x0000000000401e03 <+28>:    ret
+   0x0000000000401e04 <+29>:    call   0x402447 <explode_bomb>
+   0x0000000000401e09 <+34>:    jmp    0x401dff <phase_1+24>
+End of assembler dump.
+
+### Proceso de análisis
+- Observé que la función realiza una comparación de cadenas
+- Mediante el comando x/s 0x4c9a60 encontré la cadena esperada
+
+### Solución
+"Junta esperencia en la vida  Porque nada ensenha tanto Como el sufrir y el llorar"
+
+## Fase 2
+### Análisis del código assembler
+Dump of assembler code for function phase_2:
+   0x0000000000401e50 <+0>:     endbr64
+   0x0000000000401e54 <+4>:     push   r12
+   0x0000000000401e56 <+6>:     push   rbp
+   0x0000000000401e57 <+7>:     push   rbx
+   0x0000000000401e58 <+8>:     mov    rbx,rdi
+   0x0000000000401e5b <+11>:    mov    esi,0x20
+   0x0000000000401e60 <+16>:    call   0x4011c0
+   0x0000000000401e65 <+21>:    mov    rbp,rax
+   0x0000000000401e68 <+24>:    test   rax,rax
+   0x0000000000401e6b <+27>:    je     0x401ea6 <phase_2+86>
+   0x0000000000401e6d <+29>:    mov    edx,0xa
+   0x0000000000401e72 <+34>:    mov    esi,0x0
+   0x0000000000401e77 <+39>:    mov    rdi,rbx
+   0x0000000000401e7a <+42>:    call   0x4068c0 <strtoq>
+   0x0000000000401e7f <+47>:    mov    rbx,rax
+   0x0000000000401e82 <+50>:    mov    edx,0xa
+   0x0000000000401e87 <+55>:    mov    esi,0x0
+   0x0000000000401e8c <+60>:    mov    rdi,rbp
+   0x0000000000401e8f <+63>:    call   0x4068c0 <strtoq>
+   0x0000000000401e94 <+68>:    mov    edx,eax
+   0x0000000000401e96 <+70>:    lea    edi,[rbx+rax*1-0x20]
+   0x0000000000401e9a <+74>:    mov    esi,ebx
+   0x0000000000401e9c <+76>:    call   0x401e0b <misterio>
+   0x0000000000401ea1 <+81>:    pop    rbx
+   0x0000000000401ea2 <+82>:    pop    rbp
+   0x0000000000401ea3 <+83>:    pop    r12
+   0x0000000000401ea5 <+85>:    ret
+   0x0000000000401ea6 <+86>:    call   0x402447 <explode_bomb>
+   0x0000000000401eab <+91>:    jmp    0x401e6d <phase_2+29>
+End of assembler dump.
+
+### Proceso de análisis
+- Primero, reserva memoria (32 bytes)
+- Obtiene dos números del input:
+  - Primero convierte tu input (en rbx) a un número usando strtoq (base 10)
+  - Luego espera otro número (con rbp) también usando strtoq
+- Hace un cálculo: rbx + rax - 0x20 (o sea: primer_numero + segundo_numero - 32)
+- Luego llama a una función llamada misterio con:
+  - primer parámetro: el resultado de primer_numero + segundo_numero - 32
+  - segundo parámetro: el primer número
+
+### Solución
+Input: -100 2179
+
+## Fase 3
+### Análisis del código assembler
+Dump of assembler code for function phase_3:
+   0x0000000000402030 <+0>:     endbr64
+   0x0000000000402034 <+4>:     push   r13
+   0x0000000000402036 <+6>:     push   r12
+   0x0000000000402038 <+8>:     push   rbp
+   0x0000000000402039 <+9>:     push   rbx
+   0x000000000040203a <+10>:    sub    rsp,0x18
+   0x000000000040203e <+14>:    mov    rbx,rdi
+   0x0000000000402041 <+17>:    mov    rax,QWORD PTR fs:0x28
+   0x000000000040204a <+26>:    mov    QWORD PTR [rsp+0x8],rax
+   0x000000000040204f <+31>:    xor    eax,eax
+   0x0000000000402051 <+33>:    mov    edi,0x1e
+   0x0000000000402056 <+38>:    call   0x41c420 <malloc>
+   0x000000000040205b <+43>:    mov    r13,rax
+   0x000000000040205e <+46>:    mov    rcx,rsp
+   0x0000000000402061 <+49>:    mov    rdx,rax
+   0x0000000000402064 <+52>:    lea    rsi,[rip+0xc502e]        # 0x4c7099
+   0x000000000040206b <+59>:    mov    rdi,rbx
+   0x000000000040206e <+62>:    mov    eax,0x0
+   0x0000000000402073 <+67>:    call   0x407530 <__isoc99_sscanf>
+   0x0000000000402078 <+72>:    cmp    eax,0x2
+   0x000000000040207b <+75>:    jne    0x402103 <phase_3+211>
+   0x0000000000402081 <+81>:    lea    rdi,[rsp+0x4]
+   0x0000000000402086 <+86>:    call   0x401ead <readlines>
+   0x000000000040208b <+91>:    mov    r12,rax
+   0x000000000040208e <+94>:    mov    ebp,DWORD PTR [rsp+0x4]
+   0x0000000000402092 <+98>:    lea    ecx,[rbp-0x1]
+   0x0000000000402095 <+101>:   mov    edx,0x0
+   0x000000000040209a <+106>:   mov    rsi,rax
+   0x000000000040209d <+109>:   mov    rdi,r13
+   0x00000000004020a0 <+112>:   call   0x401f92 <cuenta>
+   0x00000000004020a5 <+117>:   mov    ebx,eax
+   0x00000000004020a7 <+119>:   lea    eax,[rax-0x191]
+   0x00000000004020ad <+125>:   cmp    eax,0x18e
+   0x00000000004020b2 <+130>:   ja     0x40210d <phase_3+221>
+   0x00000000004020b4 <+132>:   cmp    DWORD PTR [rsp],ebx
+   0x00000000004020b7 <+135>:   jne    0x402114 <phase_3+228>
+   0x00000000004020b9 <+137>:   test   ebp,ebp
+   0x00000000004020bb <+139>:   jle    0x4020d8 <phase_3+168>
+   0x00000000004020bd <+141>:   mov    rbx,r12
+   0x00000000004020c0 <+144>:   movsxd rbp,ebp
+   0x00000000004020c3 <+147>:   lea    rbp,[r12+rbp*8]
+   0x00000000004020c7 <+151>:   mov    rdi,QWORD PTR [rbx]
+   0x00000000004020ca <+154>:   call   0x41caf0 <free>
+   0x00000000004020cf <+159>:   add    rbx,0x8
+   0x00000000004020d3 <+163>:   cmp    rbx,rbp
+   0x00000000004020d6 <+166>:   jne    0x4020c7 <phase_3+151>
+   0x00000000004020d8 <+168>:   mov    rdi,r12
+   0x00000000004020db <+171>:   call   0x41caf0 <free>
+   0x00000000004020e0 <+176>:   mov    rdi,r13
+   0x00000000004020e3 <+179>:   call   0x41caf0 <free>
+   0x00000000004020e8 <+184>:   mov    rax,QWORD PTR [rsp+0x8]
+   0x00000000004020ed <+189>:   sub    rax,QWORD PTR fs:0x28
+   0x00000000004020f6 <+198>:   jne    0x40211b <phase_3+235>
+   0x00000000004020f8 <+200>:   add    rsp,0x18
+   0x00000000004020fc <+204>:   pop    rbx
+   0x00000000004020fd <+205>:   pop    rbp
+   0x00000000004020fe <+206>:   pop    r12
+   0x0000000000402100 <+208>:   pop    r13
+   0x0000000000402102 <+210>:   ret
+   0x0000000000402103 <+211>:   call   0x402447 <explode_bomb>
+   0x0000000000402108 <+216>:   jmp    0x402081 <phase_3+81>
+   0x000000000040210d <+221>:   call   0x402447 <explode_bomb>
+   0x0000000000402112 <+226>:   jmp    0x4020b4 <phase_3+132>
+   0x0000000000402114 <+228>:   call   0x402447 <explode_bomb>
+   0x0000000000402119 <+233>:   jmp    0x4020b9 <phase_3+137>
+   0x000000000040211b <+235>:   call   0x432160 <__stack_chk_fail_local>
+End of assembler dump.
+
+### Proceso de análisis
+- La fase 3 espera una palabra y un número ("%s %d")
+- Lee la palabra y el número
+- Llama a readlines para leer líneas de palabras.txt
+- Llama a cuenta que hace un cálculo complejo usando la palabra
+- Compara el resultado con el número que proporcionaste
+
+### Solución
+Input: abachar 799
+
+## Fase 4
+### Análisis del código assembler
+Dump of assembler code for function phase_4:
+   0x0000000000402120 <+0>:     endbr64
+   0x0000000000402124 <+4>:     push   r12
+   0x0000000000402126 <+6>:     push   rbp
+   0x0000000000402127 <+7>:     push   rbx
+   0x0000000000402128 <+8>:     sub    rsp,0x10
+   0x000000000040212c <+12>:    mov    rbx,rdi
+   0x000000000040212f <+15>:    mov    rax,QWORD PTR fs:0x28
+   0x0000000000402138 <+24>:    mov    QWORD PTR [rsp+0x8],rax
+   0x000000000040213d <+29>:    xor    eax,eax
+   0x000000000040213f <+31>:    lea    r12,[rsp+0x1]
+   0x0000000000402144 <+36>:    mov    rdx,r12
+   0x0000000000402147 <+39>:    lea    rsi,[rip+0xc5005]        # 0x4c7153
+   0x000000000040214e <+46>:    call   0x407530 <__isoc99_sscanf>
+   0x0000000000402153 <+51>:    mov    ebp,eax
+   0x0000000000402155 <+53>:    mov    rdi,r12
+   0x0000000000402158 <+56>:    call   0x4011b0
+   0x000000000040215d <+61>:    cmp    ebp,0x1
+   0x0000000000402160 <+64>:    jne    0x402168 <phase_4+72>
+   0x0000000000402162 <+66>:    cmp    rax,0x6
+   0x0000000000402166 <+70>:    je     0x40216d <phase_4+77>
+   0x0000000000402168 <+72>:    call   0x402447 <explode_bomb>
+   0x000000000040216d <+77>:    mov    eax,0x0
+   0x0000000000402172 <+82>:    lea    rcx,[rip+0xcbcc7]        # 0x4cde40 <array.0>
+   0x0000000000402179 <+89>:    movzx  edx,BYTE PTR [rbx+rax*1]
+   0x000000000040217d <+93>:    and    edx,0xf
+   0x0000000000402180 <+96>:    movzx  edx,BYTE PTR [rcx+rdx*1]
+   0x0000000000402184 <+100>:   mov    BYTE PTR [rsp+rax*1+0x1],dl
+   0x0000000000402188 <+104>:   add    rax,0x1
+   0x000000000040218c <+108>:   cmp    rax,0x6
+   0x0000000000402190 <+112>:   jne    0x402179 <phase_4+89>
+   0x0000000000402192 <+114>:   mov    BYTE PTR [rsp+0x7],0x0
+   0x0000000000402197 <+119>:   lea    rdi,[rsp+0x1]
+   0x000000000040219c <+124>:   lea    rsi,[rip+0xc4efc]        # 0x4c709f
+   0x00000000004021a3 <+131>:   call   0x401140
+   0x00000000004021a8 <+136>:   test   eax,eax
+   0x00000000004021aa <+138>:   jne    0x4021c5 <phase_4+165>
+   0x00000000004021ac <+140>:   mov    rax,QWORD PTR [rsp+0x8]
+   0x00000000004021b1 <+145>:   sub    rax,QWORD PTR fs:0x28
+   0x00000000004021ba <+154>:   jne    0x4021cc <phase_4+172>
+   0x00000000004021bc <+156>:   add    rsp,0x10
+   0x00000000004021c0 <+160>:   pop    rbx
+   0x00000000004021c1 <+161>:   pop    rbp
+   0x00000000004021c2 <+162>:   pop    r12
+   0x00000000004021c4 <+164>:   ret
+   0x00000000004021c5 <+165>:   call   0x402447 <explode_bomb>
+   0x00000000004021ca <+170>:   jmp    0x4021ac <phase_4+140>
+   0x00000000004021cc <+172>:   call   0x432160 <__stack_chk_fail_local>
+End of assembler dump.
+
+### Proceso de análisis
+- Formato de entrada: "%s" - espera una cadena
+- Cadena esperada: "chango" - después de la transformación
+- Tabla de mapeo: "egmcfaijopnhdbkl" - mapea valores 0-15 a letras
+- Toma cada carácter de tu entrada
+- Extrae los 4 bits menos significativos (and edx,0xf)
+- Usa ese valor para indexar en la tabla de mapeo
+- Si el resultado forma la palabra "chango", la fase se desactiva
+
+### Solución
+Input: 3K5:A8
