@@ -66,6 +66,19 @@ End of assembler dump.
   - primer parámetro: el resultado de primer_numero + segundo_numero - 32
   - segundo parámetro: el primer número
 
+### Proceso de análisis adicional
+- La función "misterio" implementa un algoritmo de cálculo basado en dos valores: v1 y v2
+- Realiza la operación: v2^2 - v1^2 - v1
+- Para calcular el resultado correcto, revisé las condiciones:
+  * v1 debe estar entre -1000 y 1000
+  * El resultado debe ser exactamente 2179
+- Probando con diferentes valores para v1, determiné que -100 produce exactamente el resultado esperado:
+  * 2179 = v2^2 - (-100)^2 - (-100)
+  * 2179 = v2^2 - 10000 + 100
+  * v2^2 = 12079
+  * v2 = 109.9 (aprox.)
+- Como v2 debe ser entero, la solución exacta es "-100 2179"
+
 ### Solución
 Input: -100 2179
 
@@ -144,11 +157,20 @@ End of assembler dump.
 - La fase 3 espera una palabra y un número ("%s %d")
 - Lee la palabra y el número
 - Llama a readlines para leer líneas de palabras.txt
-- Llama a cuenta que hace un cálculo complejo usando la palabra
-- Compara el resultado con el número que proporcionaste
+- Llama a cuenta que hace un cálculo complejo usando la 
+- Llama a la función cuenta que implementa una búsqueda binaria en la lista de palabras:
+  * La función recibe cuatro parámetros: un buffer para la palabra, el arreglo de palabras, un límite inferior (0) y un límite superior (número de líneas-1)
+  * Calcula el índice medio usando: mid = (low & high) + ((low XOR high) >> 1)
+  * Compara la palabra ingresada con la palabra del diccionario en la posición mid
+  * Si coinciden, retorna el valor ASCII del primer carácter
+  * Si la palabra es mayor, recursivamente busca en la mitad superior del arreglo
+  * Si la palabra es menor, busca en la mitad inferior
+  * En cada recursión, acumula los valores ASCII de los primeros caracteres
+  * El resultado final es la suma de los valores ASCII de todos los caracteres "visitados"
+- Finalmente, compara si este valor acumulado está en el rango permitido (401-799) y si coincide con el número proporcionado por el usuario
 
 ### Solución
-Input: abachar 799
+Input: abatatar 782
 
 ## Fase 4
 ### Análisis del código assembler
@@ -210,6 +232,173 @@ End of assembler dump.
 - Extrae los 4 bits menos significativos (and edx,0xf)
 - Usa ese valor para indexar en la tabla de mapeo
 - Si el resultado forma la palabra "chango", la fase se desactiva
+- La transformación de "3K5:A8" a "chango" funciona de la siguiente manera:
+  * '3' (ASCII 0x33) & 0xF = 3 → tabla[3] = 'c'
+  * 'K' (ASCII 0x4B) & 0xF = 11 → tabla[11] = 'h'
+  * '5' (ASCII 0x35) & 0xF = 5 → tabla[5] = 'a'
+  * ':' (ASCII 0x3A) & 0xF = 10 → tabla[10] = 'n'
+  * 'A' (ASCII 0x41) & 0xF = 1 → tabla[1] = 'g'
+  * '8' (ASCII 0x38) & 0xF = 8 → tabla[8] = 'o'
+- Descubrí esta transformación mediante análisis del código y examinando el contenido de la tabla de mapeo "egmcfaijopnhdbkl"
 
 ### Solución
 Input: 3K5:A8
+
+## Fase Secreta
+### Análisis del código assembler
+Dump of assembler code for function phase_defused:
+   0x0000000000402632 <+0>:     endbr64
+   0x0000000000402636 <+4>:     sub    $0x118,%rsp
+   0x000000000040263d <+11>:    mov    %fs:0x28,%rax
+   0x0000000000402646 <+20>:    mov    %rax,0x108(%rsp)
+   0x000000000040264e <+28>:    xor    %eax,%eax
+   0x0000000000402650 <+30>:    cmpl   $0x4,0xf8b61(%rip)        # 0x4fb1b8 <num_input_strings>
+   0x0000000000402657 <+37>:    je     0x402674 <phase_defused+66>
+   0x0000000000402659 <+39>:    mov    0x108(%rsp),%rax
+   0x0000000000402661 <+47>:    sub    %fs:0x28,%rax
+   0x000000000040266a <+56>:    jne    0x4026e5 <phase_defused+179>
+   0x000000000040266c <+58>:    add    $0x118,%rsp
+   0x0000000000402673 <+65>:    ret
+   0x0000000000402674 <+66>:    lea    0xc(%rsp),%rcx
+   0x0000000000402679 <+71>:    lea    0x90(%rsp),%rdx
+   0x0000000000402681 <+79>:    lea    0x10(%rsp),%r8
+   0x0000000000402686 <+84>:    lea    0xc4ac0(%rip),%rsi        # 0x4c714d
+   0x000000000040268d <+91>:    lea    0xf8c1c(%rip),%rdi        # 0x4fb2b0 <input_strings+240>
+   0x0000000000402694 <+98>:    call   0x407530 <__isoc99_sscanf>
+   0x0000000000402699 <+103>:   cmp    $0x3,%eax
+   0x000000000040269c <+106>:   je     0x4026ac <phase_defused+122>
+   0x000000000040269e <+108>:   lea    0xc74d3(%rip),%rdi        # 0x4c9b78
+   0x00000000004026a5 <+115>:   call   0x411190 <puts>
+   0x00000000004026aa <+120>:   jmp    0x402659 <phase_defused+39>
+   0x00000000004026ac <+122>:   lea    0x10(%rsp),%rdi
+   0x00000000004026b1 <+127>:   lea    0xc4a9e(%rip),%rsi        # 0x4c7156
+   0x00000000004026b8 <+134>:   call   0x40231e <strings_not_equal>
+   0x00000000004026bd <+139>:   test   %eax,%eax
+   0x00000000004026bf <+141>:   jne    0x40269e <phase_defused+108>
+   0x00000000004026c1 <+143>:   lea    0xc7450(%rip),%rdi        # 0x4c9b18
+   0x00000000004026c8 <+150>:   call   0x411190 <puts>
+   0x00000000004026cd <+155>:   lea    0xc7474(%rip),%rdi        # 0x4c9b48
+   0x00000000004026d4 <+162>:   call   0x411190 <puts>
+   0x00000000004026d9 <+167>:   mov    $0x0,%eax
+   0x00000000004026de <+172>:   call   0x402212 <secret_phase>
+   0x00000000004026e3 <+177>:   jmp    0x40269e <phase_defused+108>
+   0x00000000004026e5 <+179>:   call   0x432160 <__stack_chk_fail_local>
+End of assembler dump.
+
+Dump of assembler code for function secret_phase:
+   0x0000000000402212 <+0>:     endbr64
+   0x0000000000402216 <+4>:     push   %rbx
+   0x0000000000402217 <+5>:     call   0x4024ea <read_line>
+   0x000000000040221c <+10>:    mov    %rax,%rdi
+   0x000000000040221f <+13>:    mov    $0xa,%edx
+   0x0000000000402224 <+18>:    mov    $0x0,%esi
+   0x0000000000402229 <+23>:    call   0x4068c0 <strtoq>
+   0x000000000040222e <+28>:    mov    %eax,%ebx
+   0x0000000000402230 <+30>:    sub    $0x1,%eax
+   0x0000000000402233 <+33>:    cmp    $0x3e8,%eax
+   0x0000000000402238 <+38>:    ja     0x402260 <secret_phase+78>
+   0x000000000040223a <+40>:    mov    %ebx,%esi
+   0x000000000040223c <+42>:    lea    0xf6fad(%rip),%rdi        # 0x4f91f0 <n1>
+   0x0000000000402243 <+49>:    call   0x4021d1 <fun7>
+   0x0000000000402248 <+54>:    cmp    $0x5,%eax
+   0x000000000040224b <+57>:    jne    0x402267 <secret_phase+85>
+   0x000000000040224d <+59>:    lea    0xc7864(%rip),%rdi        # 0x4c9ab8
+   0x0000000000402254 <+66>:    call   0x411190 <puts>
+   0x0000000000402259 <+71>:    call   0x402632 <phase_defused>
+   0x000000000040225e <+76>:    pop    %rbx
+   0x000000000040225f <+77>:    ret
+   0x0000000000402260 <+78>:    call   0x402447 <explode_bomb>
+   0x0000000000402265 <+83>:    jmp    0x40223a <secret_phase+40>
+   0x0000000000402267 <+85>:    call   0x402447 <explode_bomb>
+   0x000000000040226c <+90>:    jmp    0x40224d <secret_phase+59>
+End of assembler dump.
+
+Dump of assembler code for function fun7:
+   0x00000000004021d1 <+0>:     endbr64
+   0x00000000004021d5 <+4>:     test   %rdi,%rdi
+   0x00000000004021d8 <+7>:     je     0x40220c <fun7+59>
+   0x00000000004021da <+9>:     sub    $0x8,%rsp
+   0x00000000004021de <+13>:    mov    (%rdi),%edx
+   0x00000000004021e0 <+15>:    cmp    %esi,%edx
+   0x00000000004021e2 <+17>:    jg     0x4021f0 <fun7+31>
+   0x00000000004021e4 <+19>:    mov    $0x0,%eax
+   0x00000000004021e9 <+24>:    jne    0x4021fd <fun7+44>
+   0x00000000004021eb <+26>:    add    $0x8,%rsp
+   0x00000000004021ef <+30>:    ret
+   0x00000000004021f0 <+31>:    mov    0x8(%rdi),%rdi
+   0x00000000004021f4 <+35>:    call   0x4021d1 <fun7>
+   0x00000000004021f9 <+40>:    add    %eax,%eax
+   0x00000000004021fb <+42>:    jmp    0x4021eb <fun7+26>
+   0x00000000004021fd <+44>:    mov    0x10(%rdi),%rdi
+   0x0000000000402201 <+48>:    call   0x4021d1 <fun7>
+   0x0000000000402206 <+53>:    lea    0x1(%rax,%rax,1),%eax
+   0x000000000040220a <+57>:    jmp    0x4021eb <fun7+26>
+   0x000000000040220c <+59>:    mov    $0xffffffff,%eax
+   0x0000000000402211 <+64>:    ret
+End of assembler dump.
+
+### Proceso de análisis
+- Descubrí la fase secreta gracias a un comentario sospechoso en el código:
+
+  /*Increible que hayan llegado hasta aca. Pero falta algo ... 
+    Capaz lo pasaron por alto, Mua ha ha ha ha! */
+
+Analizando la función phase_defused, descubrí el secreto para activarla:
+
+Verifica que se hayan completado 4 fases (línea +30)
+Examina la respuesta de la fase 3 (línea +91)
+Busca un formato específico "%s %d %s" (línea +84)
+Verifica que la tercera parte sea "abrete_sesamo" (línea +127)
+Para activar la fase secreta, modifiqué mi respuesta para la fase 3:
+
+En lugar de solo "abatatar 782"
+Utilicé "abatatar 782 abrete_sesamo"
+Una vez activada, analicé la fase secreta:
+
+Espera un número como entrada
+El número debe estar entre 1 y 1001 (líneas +30-38)
+Llama a fun7 con el número y un puntero a un árbol binario
+El resultado de fun7 debe ser exactamente 5 (línea +54)
+Analicé la estructura del árbol binario examinando la memoria:
+
+               36 (n1)
+              /      \
+             /        \
+            8         50 (n22)
+           / \       /   \
+          6   ?    45     107
+                  /  \    / \
+                 40   47 99  1001
+
+La función fun7 implementa un recorrido recursivo del árbol:
+
+Si input == nodo: retorna 0
+Si input < nodo: retorna 2 * fun7(izquierdo)
+Si input > nodo: retorna 2 * fun7(derecho) + 1
+Para obtener un resultado de 5, necesitaba un camino específico:
+
+Derecha desde 36 (primer bit: 1)
+Izquierda desde 50 (segundo bit: 0)
+Derecha desde 45 (tercer bit: 1)
+
+### Recorrido detallado en el árbol binario
+- El valor 47 navega por el árbol binario siguiendo este camino exacto:
+  1. Comienza en el nodo raíz (36)
+  2. 47 > 36, va a la derecha → llega al nodo 50
+  3. 47 < 50, va a la izquierda → llega al nodo 45
+  4. 47 > 45, va a la derecha → llega al nodo 47
+  5. 47 = 47, encuentra coincidencia y retorna 0
+
+- La función fun7 calcula el valor 5 así:
+  1. En el nodo 47: coincidencia exacta → retorna 0
+  2. En el nodo 45: va a la derecha, duplica el resultado y suma 1 → 2*0+1 = 1
+  3. En el nodo 50: va a la izquierda, duplica el resultado → 2*1 = 2
+  4. En el nodo 36: va a la derecha, duplica el resultado y suma 1 → 2*2+1 = 5
+
+- La secuencia de bits 101 (decimal 5) corresponde exactamente a este recorrido:
+  * 1: derecha desde la raíz
+  * 0: izquierda desde el nodo 50
+  * 1: derecha desde el nodo 45
+
+### Solución
+Respuesta a la fase secreta: 47

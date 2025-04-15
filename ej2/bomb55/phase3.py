@@ -3,7 +3,6 @@ def cuenta(target, words, lo, hi):
         raise ValueError("Rango inválido: la búsqueda debería explotar la bomba.")
     mid = (lo + hi) // 2   # Esto equivale al cálculo de (low & high) + ((low ^ high) >> 1)
     mid_word = words[mid]
-    # Usamos una comparación lexicográfica similar a strcmp:
     # Devuelve -1 si target < mid_word, 0 si son iguales y 1 si target > mid_word.
     cmp_result = (target > mid_word) - (target < mid_word)
     ascii_val = ord(mid_word[0])  # valor del primer carácter de la palabra en la posición media
@@ -34,16 +33,10 @@ def main():
     n = len(lines)
     print(f"Se encontraron {n} palabras en 'palabras.txt'.")
     
-    # Aquí podrías asumir que el rango de búsqueda es todo el arreglo.
-    # En la bomba, el límite superior se calcula como (número ingresado - 1).
-    # Normalmente, se espera que la entrada (número) sea igual a cuenta(...).
-    # Como guía, buscamos candidatos cuyos resultados estén entre 401 y 799.
     rango_min = 401
     rango_max = 799
 
-    # Para automatizar, podemos iterar por cada palabra candidata (del propio archivo)
-    # y ver cuál produce un resultado dentro del rango.
-    # En muchos bomb labs la clave no es una palabra existente, pero este es un buen punto de partida.
+
     print("Probando palabras del archivo para ver qué resultados dan:")
     for candidate in lines:
         try:
@@ -52,13 +45,6 @@ def main():
             continue
         if rango_min <= resultado <= rango_max:
             print(f"Candidato: '{candidate}' --> Resultado: {resultado}")
-    
-    # Si no encuentras resultados “aceptables” entre las palabras del archivo,
-    # podrías considerar probar pequeñas variaciones (por ejemplo, modificando una letra)
-    # o iterar sobre un conjunto predefinido de candidatos.
-    #
-    # Otra estrategia es usar GDB con Python para inspeccionar en tiempo real los parámetros
-    # y el camino de la búsqueda binaria en memoria.
 
 if __name__ == "__main__":
     main()
