@@ -139,6 +139,6 @@ Assignment and test harness by the I304 teaching staff at UdeSA. The bomb is bas
   title        = {Linked Lists in x86-64 Assembly and Reverse Engineering a Binary Bomb},
   year         = {2025},
   howpublished = {Universidad de San Andr{\'e}s, I304 Computer Architecture and Operating Systems},
-  url          = {https://github.com/Santi2065/TP2-ACSO}
+  url          = {https://github.com/Santi2065/x86-assembly-binary-bomb}
 }
 ```
